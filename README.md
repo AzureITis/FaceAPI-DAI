@@ -1,7 +1,14 @@
 # FaceAPI-DAI (Detect And Indentify) 
 This is just a 'my first' C# WPF app! ;)
 
-An C# WPF project which uses the Azure Face API to detect and indentify faces on images. It also includes Face Group, Person and Face Management. But let me be clear... I'm not a developer... I'm really a wannbe-developer! ;) So, don't judge my code. Honestly,.. I could not resist temptation to create an application which uses the Azure Face API.
+An C# WPF project which uses the Azure Face API to detect and indentify faces on images. It also includes Face Group, Person and Face Management. It uses the Face-API library's (Microsoft.ProjectOxford.Face). I have created this example just for myself, to get to know the Face-API and getting some dev experience! So, with this app you can:
+
+- Create/delete Face-API groups
+- Create/delete Face-API persons
+- Add/delete Face-API persisted Faces
+- Detect and indentify Faces on pictures based on faces of persons in your Face/person Group
+
+But let me be clear... I'm not a developer... I'm really a wannbee-developer! ;) So, don't judge my code. Honestly,.. I could not resist temptation to create an application which uses the Azure Face API.
 
 
 
