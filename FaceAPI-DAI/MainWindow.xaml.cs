@@ -20,11 +20,13 @@ using System.Globalization;
 using System.Diagnostics;
 
 
-
 namespace FaceAPIDAI
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// FaceAPI-DAI!
+    ///
+    /// Created by Pieterbas Nagengast (AzureITis.nl) as a non-developer ;)
+    /// @June 2017
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -37,7 +39,7 @@ namespace FaceAPIDAI
 
         /// <summary>
         /// Please update the Settings.settings file accordingly.
-        /// Provide both Face API key and Face API URL (Azure region specific).
+        /// Provide both Face API key and Face API URL (Azure region specific):
         /// 
         /// West US - https://westus.api.cognitive.microsoft.com/face/v1.0
         /// East US 2 - https://eastus2.api.cognitive.microsoft.com/face/v1.0
@@ -48,11 +50,9 @@ namespace FaceAPIDAI
 
 
         private readonly IFaceServiceClient faceServiceClient = new FaceServiceClient(Properties.Settings.Default.Key,Properties.Settings.Default.URL );
-        
+                      
 
-        
-
-        // Get Face Attributes
+        // Detect Faces and get Face Attributes
         private async Task<Face[]> UploadAndGetFaceAttribs(string imageFilePath)
         {
             try
@@ -80,12 +80,12 @@ namespace FaceAPIDAI
                 return new Face[0];
             }
         }
-
-
-
-
+        
         private async void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
+
+            //Upload image to be detected and indentified by Face API
+
             var openDlg = new Microsoft.Win32.OpenFileDialog();
 
             openDlg.Filter = "JPEG Image(*.jpg)|*.jpg";
@@ -113,11 +113,7 @@ namespace FaceAPIDAI
 
 
             Title = String.Format("Detection Finished. {0} face(s) detected", faces.Length);
-
-
-
-
-
+            
             //add rectangle        
 
             if (faces.Length > 0)
@@ -128,14 +124,10 @@ namespace FaceAPIDAI
                     new Rect(0, 0, bitmapSource.Width, bitmapSource.Height));
                 double dpi = bitmapSource.DpiX;
                 double resizeFactor = 96 / dpi;
-
-
-
-
-
+                
                 foreach (var face in faces)
                 {
-
+                    //draw rectangle
                     drawingContext.DrawRectangle(
                     Brushes.Transparent,
                     new Pen(Brushes.AliceBlue, 1),
@@ -147,20 +139,16 @@ namespace FaceAPIDAI
                         )
                         );
 
-                    // indentify
+                    
 
                     Guid[] faceID = new Guid[1];
                     faceID[0] = face.FaceId;
-
-                    
-
-
+                                        
                     ComboBoxItem SelectedGrp = ComboBox1.SelectedItem as ComboBoxItem;
 
                     try
                     {
-
-
+                        // Indentify Face(s)   
                         var results = await faceServiceClient.IdentifyAsync(SelectedGrp.ToolTip.ToString(), faceID);
 
 
@@ -175,10 +163,8 @@ namespace FaceAPIDAI
                             var candidateId = results[0].Candidates[0].PersonId;
                             var person = await faceServiceClient.GetPersonAsync(SelectedGrp.ToolTip.ToString(), candidateId);
 
-
-
-
-
+                            
+                            // Add persons name to rectangle
                             string fTxt = face.FaceAttributes.Gender +
                                 Environment.NewLine +
                                 "Age: " + face.FaceAttributes.Age +
@@ -200,6 +186,7 @@ namespace FaceAPIDAI
                     }
                     catch (Exception)
                     {
+                        // Add text to rectangle if person is unkown (unindentified)
                         string fTxt = face.FaceAttributes.Gender +
                             Environment.NewLine +
                             "Age: " + face.FaceAttributes.Age +
@@ -236,8 +223,7 @@ namespace FaceAPIDAI
         private async void GetFacegroupInfo()
         {
             
-
-           
+            //Get PersonGroup, person and faces registered in Face API and put them in a TreeView
             PersonGroup[] personGroups = await faceServiceClient.ListPersonGroupsAsync();
                         
             foreach (var personGroup in personGroups)
@@ -289,6 +275,7 @@ namespace FaceAPIDAI
 
         private  void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
+            //Dekete Person incl. Faces
             TreeViewItem SelectedPerson = TreeView1.SelectedItem as TreeViewItem;
             TreeViewItem ParentOfSelectedPerson = SelectedPerson.Parent as TreeViewItem;
             Guid PersonIDguid = new Guid(SelectedPerson.ToolTip.ToString());
@@ -316,7 +303,7 @@ namespace FaceAPIDAI
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-                       
+            //add details to create person group           
             string msgText = "Add group name and id";
             string msglbl1Text = "Group Name:";
             string msglbl2Text = "Group ID:";
@@ -341,6 +328,8 @@ namespace FaceAPIDAI
 
         private void GroupOkButton_Click(object sender, RoutedEventArgs e)
         {
+
+            //Create person group
             try
             {
                 TreeViewItem SelectedGroup = TreeView1.SelectedItem as TreeViewItem;
@@ -373,6 +362,7 @@ namespace FaceAPIDAI
 
         private async void PersonOkButton_Click(object sender, RoutedEventArgs e)
         {
+            //Create Person
             try
             {
                 TreeViewItem SelectedGroup = TreeView1.SelectedItem as TreeViewItem;
@@ -400,9 +390,8 @@ namespace FaceAPIDAI
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)
         {
-      
-            
-      
+                 
+            //Delete personGroup
             try
             {
                 TreeViewItem SelectedGroup = TreeView1.SelectedItem as TreeViewItem;
@@ -426,8 +415,7 @@ namespace FaceAPIDAI
 
         private void MenuItem_Click_3(object sender, RoutedEventArgs e)
         {
-            
-
+            // add person
             string msgText = "Add Persons Name";
             string msglbl1Text = "Name:";
             
@@ -440,14 +428,12 @@ namespace FaceAPIDAI
             GroupOkButton.Visibility = System.Windows.Visibility.Hidden;
             PersonOkButton.Visibility = System.Windows.Visibility.Visible;
             InputBox.Visibility = System.Windows.Visibility.Visible;
-
-
-
-
+            
         }
 
         private  void MenuItem_Click_4(object sender, RoutedEventArgs e)
         {
+            //Train Person Gorup
             TreeViewItem SelectedGroup = TreeView1.SelectedItem as TreeViewItem;
 
             try
@@ -464,10 +450,10 @@ namespace FaceAPIDAI
         private async void MenuItem_Click_5(object sender, RoutedEventArgs e)
         {
 
+            //Add Face to person
             TreeViewItem SelectedPerson = TreeView1.SelectedItem as TreeViewItem;
             TreeViewItem ParentOfSelectedPerson = SelectedPerson.Parent as TreeViewItem;
             Guid PersonIDguid = new Guid(SelectedPerson.ToolTip.ToString());
-                        
                 
             var openDlg = new Microsoft.Win32.OpenFileDialog();
 
@@ -484,8 +470,7 @@ namespace FaceAPIDAI
             try
             {
                 Stream s = File.OpenRead(filePath);
-
-
+                
                 var AddFace = await faceServiceClient.AddPersonFaceAsync(ParentOfSelectedPerson.ToolTip.ToString(), PersonIDguid, s);
 
                 TreeViewItem FaceItem = new TreeViewItem();
