@@ -10,6 +10,9 @@ An C# WPF project which uses the Azure Face API to detect and identify faces on 
 
 But let me be clear... I'm not a developer... I'm really a wannbee-developer! ;) So, don't judge my code. Honestly,.. I could not resist temptation to create an application which uses the Azure Face API.
 
+![Screenshot](http://storage.azureitis.nl/media/2017/06/FaceAPI-DAI.png)
+
+
 
 
 
